@@ -5,20 +5,20 @@ const fs = require('fs')
 const logtypes = {
     SUCCESS: {
         name: 'SUCCESS',
-        color: '\x1b[32m',
+        color: '\x1b[32m'
     },
     INFO: {
         name: 'INFO',
-        color: '\x1b[36m',
+        color: '\x1b[36m'
     },
     WARNING: {
         name: 'WARNING',
-        color: '\x1b[33m',
+        color: '\x1b[33m'
     },
     ERROR: {
         name: 'ERROR',
-        color: '\x1b[31m',
-    },
+        color: '\x1b[31m'
+    }
 }
 
 // send the error state and log it on development mod
@@ -37,7 +37,7 @@ function log(logType, ...data) {
         ']',
         logType.name.padEnd(len),
         ':',
-        ...data,
+        ...data
     ]
 
     if (process.env.ENVIRONMENT === 'development') {

@@ -81,7 +81,6 @@ Scan.findByName = async (name, result) => {
     }
 
     // not found Scan with the id
-
     result({ kind: 'not_found' }, null)
 }
 
@@ -134,7 +133,6 @@ Scan.updateById = async (id, scan, result) => {
 
     if (res.affectedRows == 0) {
         // not found Scan with the id
-
         notFound(result)
 
         return
@@ -156,7 +154,6 @@ Scan.delete = async (id, result) => {
 
     if (res.affectedRows == 0) {
         // not found Scan with the id
-
         notFound(result)
 
         return

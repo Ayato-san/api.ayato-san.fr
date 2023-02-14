@@ -3,7 +3,6 @@ const Material = require('../../models/web/material.js')
 const { state } = require('../../helper')
 
 // Create and Save a new Material
-
 exports.create = (req, res) => {
     // Validate request
 
@@ -40,7 +39,6 @@ exports.create = (req, res) => {
 }
 
 // Retrieve all Materials from the database.
-
 exports.findAll = (req, res) => {
     Material.findAll((err, data) => {
         if (err) {
@@ -57,7 +55,6 @@ exports.findAll = (req, res) => {
 }
 
 // Find a single Material by Id
-
 exports.find = (req, res) => {
     Material.find(req.params.id, (err, data) => {
         if (err) {
@@ -77,10 +74,8 @@ exports.find = (req, res) => {
 }
 
 // Update a Material identified by the id in the request
-
 exports.update = (req, res) => {
     // Validate Request
-
     if (!req.body) {
         state(res, 400, 'Content can not be empty!')
     }
@@ -103,7 +98,6 @@ exports.update = (req, res) => {
 }
 
 // Delete a Material with the specified id in the request
-
 exports.delete = (req, res) => {
     Material.delete(req.params.id, (err, data) => {
         if (err) {

@@ -97,7 +97,6 @@ exports.find = (req, res) => {
 }
 
 // Update a Scan identified by the id in the request
-
 exports.update = (req, res) => {
     // Validate Request
 
@@ -125,7 +124,6 @@ exports.update = (req, res) => {
 }
 
 // Delete a Scan with the specified id in the request
-
 exports.delete = (req, res) => {
     Scan.delete(req.params.id, (err, data) => {
         if (err) {

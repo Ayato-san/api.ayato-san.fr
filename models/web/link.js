@@ -66,7 +66,6 @@ Link.findByName = async (name, result) => {
     }
 
     // not found Scan with the id
-
     result({ kind: 'not_found' }, null)
 }
 
@@ -101,7 +100,6 @@ Link.updateById = async (id, link, result) => {
 
     if (res.affectedRows == 0) {
         // not found Link with the id
-
         notFound(result)
 
         return
@@ -123,7 +121,6 @@ Link.delete = async (id, result) => {
 
     if (res.affectedRows == 0) {
         // not found Link with the id
-
         notFound(result)
 
         return

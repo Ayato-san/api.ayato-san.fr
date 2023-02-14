@@ -43,7 +43,6 @@ Material.find = async (id, result) => {
     }
 
     // not found Material with the id
-
     result({ kind: 'not_found' }, null)
 }
 
@@ -90,7 +89,6 @@ Material.updateById = async (id, material, result) => {
 
     if (res.affectedRows == 0) {
         // not found Material with the id
-
         notFound(result)
 
         return
@@ -112,7 +110,6 @@ Material.delete = async (id, result) => {
 
     if (res.affectedRows == 0) {
         // not found Material with the id
-
         notFound(result)
 
         return
