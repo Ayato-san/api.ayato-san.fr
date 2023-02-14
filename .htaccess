@@ -1,0 +1,8 @@
+# DO NOT REMOVE. CLOUDLINUX PASSENGER CONFIGURATION BEGIN
+PassengerAppRoot "/home/zyfn4294/public_html/api.ayato-san.fr"
+PassengerBaseURI "/"
+PassengerNodejs "/home/zyfn4294/nodevenv/public_html/api.ayato-san.fr/14/bin/node"
+PassengerAppType node
+PassengerStartupFile server.js
+PassengerAppLogFile "/home/zyfn4294/logs/api.ayato-san.fr"
+# DO NOT REMOVE. CLOUDLINUX PASSENGER CONFIGURATION END
