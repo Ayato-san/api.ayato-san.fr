@@ -1,55 +1,86 @@
 const { newState } = require('../helper')
-const Response = require('../models/Response')
+const Model = require('../models/Model')
+const HttpResponse = require('../models/Response')
 
 module.exports = class Controller {
-    static find(Object, req, res) {
-        Object.find(req.params.id, response => {
+    /**
+     * find one object into the table
+     * @param {Model} Interface the Model interface
+     * @param {Request} req the server request
+     * @param {Response} res the server response
+     */
+    static find(Interface, req, res) {
+        Interface.find(req.params.id, response => {
             newState(res, response)
         })
     }
 
-    static findAll(Object, req, res) {
-        Object.findAll(req.query, response => {
+    /**
+     * find all objects into the table
+     * @param {Model} Interface the Model interface
+     * @param {Request} req the server request
+     * @param {Response} res the server response
+     */
+    static findAll(Interface, req, res) {
+        Interface.findAll(req.query, response => {
             newState(res, response)
         })
     }
 
-    static create(Object, req, res) {
+    /**
+     * create a new object into the table
+     * @param {Model} Interface the Model interface
+     * @param {Request} req the server request
+     * @param {Response} res the server response
+     */
+    static create(Interface, req, res) {
         // Validate request
         if (!req.body) {
             newState(
                 res,
-                new Response(400, { message: 'Body can not be empty!' })
+                new HttpResponse(400, { message: 'Body can not be empty!' })
             )
             return
         }
 
         // Create a user
-        const newObject = new Object(req.body)
+        const newInterface = new Interface(req.body)
 
         // Save user in the database
-        Object.create(newObject, response => {
+        Interface.create(newInterface, response => {
             newState(res, response)
         })
     }
 
-    static update(Object, req, res) {
+    /**
+     * update an object of the table
+     * @param {Model} Interface the Model interface
+     * @param {Request} req the server request
+     * @param {Response} res the server response
+     */
+    static update(Interface, req, res) {
         // Validate Request
         if (!req.body) {
             newState(
                 res,
-                new Response(400, { message: 'Body can not be empty!' })
+                new HttpResponse(400, { message: 'Body can not be empty!' })
             )
             return
         }
 
-        Object.update(req.params.id, new Object(req.body), response => {
+        Interface.update(req.params.id, new Interface(req.body), response => {
             newState(res, response)
         })
     }
 
-    static delete(Object, req, res) {
-        Object.delete(req.params.id, response => {
+    /**
+     * delete an object of the table
+     * @param {Model} Interface the Model interface
+     * @param {Request} req the server request
+     * @param {Response} res the server response
+     */
+    static delete(Interface, req, res) {
+        Interface.delete(req.params.id, response => {
             newState(res, response)
         })
     }

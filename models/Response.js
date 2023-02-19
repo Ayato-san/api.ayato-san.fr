@@ -18,7 +18,7 @@ module.exports = class Response {
         this.#ok = Math.floor(status / 100) === 2
 
         if (Math.floor(status / 100) === 5) {
-            errorLog('error : ', this.#body.message)
+            errorLog(this.#body)
         }
     }
 

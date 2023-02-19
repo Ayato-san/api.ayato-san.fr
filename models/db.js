@@ -19,8 +19,9 @@ connection.connect(error => {
     successLog('database connected')
 })
 
-//make the query request to a promise
-
+/**
+ * query to the data base
+ */
 const query = require('util').promisify(connection.query).bind(connection)
 
 module.exports = { query }

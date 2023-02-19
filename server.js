@@ -1,7 +1,6 @@
 const express = require('express')
 const { infoLog, successLog } = require('./helper')
 const fs = require('fs')
-const path = require('path')
 const app = express()
 
 require('dotenv').config()

@@ -8,9 +8,7 @@ module.exports = function (req, res, next) {
     }
     // log the resquested URL (only in development mod)
     infoLog(
-        `Request for ${req.protocol}://${req.headers.host}${
-            req.originalUrl
-        } by ${req.headers.referer || req.protocol + '://' + req.headers.host}`
+        `Request for ${req.protocol}://${req.headers.host}${req.originalUrl}`
     )
 
     // authorization checking (need to be modified for uses)
