@@ -5,6 +5,10 @@ const Response = require('./Response')
 
 const DEFAULT_QUERY = ['limit', 'offset']
 
+function isNumberString(str) {
+    return !Number.isNaN(Number.parseInt(str))
+}
+
 module.exports = class Model {
     #id
 
@@ -39,9 +43,9 @@ module.exports = class Model {
         const values = []
         let str = `SELECT * FROM ${name}`
         let endStr = ''
-        if (queryItems.limit) {
+        if (queryItems.limit && isNumberString(queryItems.limit)) {
             endStr += ` LIMIT ${queryItems.limit}`
-            if (queryItems.offset) {
+            if (queryItems.offset && isNumberString(queryItems.offset)) {
                 endStr = endStr.replace('LIMIT', `LIMIT ${queryItems.offset},`)
             }
         }
