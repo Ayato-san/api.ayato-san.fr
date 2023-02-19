@@ -10,11 +10,11 @@ CREATE TABLE IF NOT EXISTS `material` (
   `description` varchar(254) NOT NULL,
   `image` varchar(254) NOT NULL,
   `link` varchar(245) NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `FK_material_materialType` (`type`)
+  PRIMARY KEY (`id`)
 )
 
 --
 -- Contraintes pour la table `material`
 --
-ALTER TABLE `material` ADD CONSTRAINT `material_ibfk_1` FOREIGN KEY (`type`) REFERENCES `material_type` (`id`);
+
+ALTER TABLE `material` ADD CONSTRAINT `FK_material_materialType` FOREIGN KEY (`type`) REFERENCES `material_type` (`id`);

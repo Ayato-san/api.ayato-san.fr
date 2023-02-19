@@ -1,5 +1,4 @@
 require('dotenv').config()
-const fs = require('fs')
 
 // the 4 types of log, with their color code
 const logtypes = {
@@ -10,6 +9,10 @@ const logtypes = {
     INFO: {
         name: 'INFO',
         color: '\x1b[36m'
+    },
+    DEBUG: {
+        name: 'DEBUG',
+        color: '\x1B[35m'
     },
     WARNING: {
         name: 'WARNING',
@@ -26,6 +29,14 @@ function state(res, code, message) {
     res.status(code).send({ message: message })
     if (process.env.ENVIRONMENT === 'development')
         errorLog(`${code} : "${message}"`)
+}
+
+function newState(res, responseObject) {
+    res.status(responseObject.status).send({
+        body: responseObject.body,
+        count: responseObject.count,
+        ok: responseObject.ok
+    })
 }
 
 function log(logType, ...data) {
@@ -51,6 +62,9 @@ function successLog(...data) {
 function infoLog(...data) {
     if (process.env.ENVIRONMENT === 'development') log(logtypes.INFO, ...data)
 }
+function debugLog(...data) {
+    if (process.env.ENVIRONMENT === 'development') log(logtypes.DEBUG, ...data)
+}
 function warningLog(...data) {
     log(logtypes.WARNING, ...data)
 }
@@ -58,4 +72,12 @@ function errorLog(...data) {
     log(logtypes.ERROR, ...data)
 }
 
-module.exports = { state, successLog, infoLog, warningLog, errorLog }
+module.exports = {
+    state,
+    newState,
+    successLog,
+    infoLog,
+    debugLog,
+    warningLog,
+    errorLog
+}
