@@ -9,12 +9,12 @@ const connection = require('mysql').createConnection({
     port: process.env.MYSQL_PORT,
     database: process.env.MYSQL_DATABASE,
     user: process.env.MYSQL_USER,
-    password: process.env.MYSQL_PASSWORD
+    password: process.env.MYSQL_PASSWORD,
 })
 
 // open the MySQL connection
 
-connection.connect(error => {
+connection.connect((error) => {
     if (error) throw error
     successLog('database connected')
 })

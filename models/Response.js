@@ -56,7 +56,7 @@ module.exports = class Response {
             status: this.#status,
             ok: this.#ok,
             body: this.#body,
-            count: this.#count
+            count: this.#count,
         }
     }
 }

@@ -27,12 +27,18 @@ module.exports = class User extends Model {
      * @param {Function} result the result processing function
      */
     static async findAll(query, result) {
-        await super.findAll(
-            this.#name,
-            query,
-            ['pseudo', 'displayName'],
-            result
-        )
+        let constraint = ''
+        const keys = []
+        if (query['pseudo']) {
+            constraint += super.constructConstraint(constraint, 'pseudo LIKE ?')
+            keys.push(super.likeValue(query['pseudo']))
+        }
+        if (query['displayName']) {
+            constraint += super.constructConstraint(constraint, 'displayName LIKE ?')
+            keys.push(super.likeValue(query['displayName']))
+        }
+
+        await super.findAll(this.#name, query, constraint, keys, result)
     }
 
     /**

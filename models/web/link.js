@@ -1,132 +1,69 @@
-const { query } = require('../db.js')
+const Model = require('../Model')
 
-const { errorLog } = require('../../helper')
+module.exports = class Link extends Model {
+    /**
+     * the table name
+     */
+    static #name = 'link'
 
-const Link = function (link) {
-    this.id = link.id
-    this.name = link.name
-    this.pseudo = link.pseudo
-    this.link = link.link
+    constructor(link) {
+        super(link.id)
+        this.name = link.name
+        this.pseudo = link.pseudo
+        this.link = link.link
+    }
+
+    /**
+     * find one link into the table
+     * @param {Number} id the id of the link
+     * @param {Function} result the result processing function
+     */
+    static async find(id, result) {
+        await super.find(this.#name, id, result)
+    }
+
+    /**
+     * find all links into the table
+     * @param {{}} query the request query
+     * @param {Function} result the result processing function
+     */
+    static async findAll(query, result) {
+        let constraint = ''
+        const keys = []
+        if (query['name']) {
+            constraint += super.constructConstraint(constraint, '(name = ? OR name_alt = ?)')
+            keys.push(query['name'])
+            keys.push(query['name'])
+        }
+
+        await super.findAll(this.#name, query, constraint, keys, result)
+    }
+
+    /**
+     * create a new link into the table
+     * @param {Link} newLink the link will be added
+     * @param {Function} result the result processing function
+     */
+    static async create(newLink, result) {
+        await super.create(this.#name, newLink, result)
+    }
+
+    /**
+     * update an link of the table
+     * @param {Number} id the id of the link
+     * @param {Link} link the updated link
+     * @param {Function} result the result processing function
+     */
+    static async update(id, link, result) {
+        await super.update(this.#name, id, link, result)
+    }
+
+    /**
+     * delete an link of the table
+     * @param {Number} id the id of the link
+     * @param {Function} result the result processing function
+     */
+    static async delete(id, result) {
+        await super.delete(this.#name, id, result)
+    }
 }
-
-Link.create = async (newLink, result) => {
-    let row = null
-
-    try {
-        row = await query('INSERT INTO link SET ?', newLink)
-    } catch (err) {
-        errorLog('error : ', err)
-
-        result(err, null)
-    }
-
-    result(null, { id: row.insertId, ...newLink })
-}
-
-Link.find = async (id, result) => {
-    let rows = null
-
-    try {
-        rows = await query('SELECT * FROM link WHERE id = ?', id)
-    } catch (err) {
-        errorLog('error : ', err)
-
-        result(err, null)
-    }
-
-    if (rows.length) {
-        result(null, rows)
-
-        return
-    }
-
-    // not found Link with the id
-    result({ kind: 'not_found' }, null)
-}
-
-Link.findByName = async (name, result) => {
-    let rows = null
-
-    try {
-        rows = await query(
-            'SELECT * FROM link WHERE name = ? OR name_alt = ?',
-
-            [name, name]
-        )
-    } catch (err) {
-        errorLog('error : ', err)
-
-        result(err, null)
-    }
-
-    if (rows.length) {
-        result(null, rows)
-
-        return
-    }
-
-    // not found Scan with the id
-    result({ kind: 'not_found' }, null)
-}
-
-Link.findAll = async result => {
-    let row = null
-
-    try {
-        row = await query('SELECT * FROM link')
-    } catch (err) {
-        errorLog('error : ', err)
-
-        result(err, null)
-    }
-
-    result(null, row)
-}
-
-Link.updateById = async (id, link, result) => {
-    let row = null
-
-    try {
-        row = await query(
-            'UPDATE link SET link.name = ?, link.pseudo = ?, link.link = ? WHERE id = ?',
-
-            [link.name, link.pseudo, link.link, id]
-        )
-    } catch (err) {
-        errorLog('error : ', err)
-
-        result(err, null)
-    }
-
-    if (res.affectedRows == 0) {
-        // not found Link with the id
-        notFound(result)
-
-        return
-    }
-
-    result(null, { id: id, ...link })
-}
-
-Link.delete = async (id, result) => {
-    let row = null
-
-    try {
-        row = await query('DELETE FROM link WHERE id = ?', id)
-    } catch (err) {
-        errorLog('error : ', err)
-
-        result(err, null)
-    }
-
-    if (res.affectedRows == 0) {
-        // not found Link with the id
-        notFound(result)
-
-        return
-    }
-
-    result(null, res)
-}
-
-module.exports = Link

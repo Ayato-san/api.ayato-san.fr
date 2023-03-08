@@ -1,20 +1,26 @@
 const { query } = require('./db.js')
-const { debugLog } = require('../helper')
 
 const Response = require('./Response')
 
-const DEFAULT_QUERY = ['limit', 'offset']
-
 function isNumberString(str) {
-    return !Number.isNaN(Number.parseInt(str))
+    return str && !Number.isNaN(Number.parseInt(str))
+}
+
+function stringAbove(str, min) {
+    return isNumberString(str) && Number.parseInt(str) > min
 }
 
 module.exports = class Model {
+    static DEFAULT_QUERY = ['limit', 'offset', 'order']
+
     /**
      * the id in database
      */
     #id
 
+    /**
+     * @param {Number} id the id in database
+     */
     constructor(id) {
         this.#id = Number.parseInt(id)
     }
@@ -23,6 +29,35 @@ module.exports = class Model {
     }
     set id(id) {
         this.#id = Number.parseInt(id)
+    }
+
+    /**
+     * construct added constraint to the request
+     * @param {String} base base contraint
+     * @param {String} added added constraint
+     * @returns a contruct string with clean tag and the added constraint
+     */
+    static constructConstraint(base, added) {
+        return ` ${/WHERE/g.test(base) ? 'AND' : 'WHERE'} ${added}`
+    }
+
+    /**
+     * construct added order to the request
+     * @param {String} base base contraint
+     * @param {String} added added order
+     * @returns a contruct string with clean tag and the added order
+     */
+    static constructOrder(base, added) {
+        return `${/ORDER BY/g.test(base) ? ',' : ' ORDER BY'} ${added}`
+    }
+
+    /**
+     * prepare string to like constraint
+     * @param {String} toPrepare the string to be prepared
+     * @returns prepared string
+     */
+    static likeValue(toPrepare) {
+        return '%' + toPrepare + '%'
     }
 
     /**
@@ -36,9 +71,7 @@ module.exports = class Model {
         try {
             rows = await query(`SELECT * FROM ${name} WHERE id = ?`, id)
         } catch (err) {
-            result(
-                new Response(500, { message: err || 'Something went wrong' })
-            )
+            result(new Response(500, { message: err || 'Something went wrong' }))
             return
         }
 
@@ -56,48 +89,40 @@ module.exports = class Model {
      * @param {[String]} queryList the list of different added query
      * @param {Function} result the result processing function
      */
-    static async findAll(name, queryItems, queryList, result) {
+    static async findAll(name, passedQuery, constraint, values, result) {
         // generate the query dynamicly with the request
-        let str = `SELECT * FROM ${name}`
+        let str = `SELECT * FROM ${name}${constraint}`
 
-        // generate the limit and offset component
-        let endStr = ''
-        if (
-            queryItems.limit &&
-            isNumberString(queryItems.limit) &&
-            Number.parseInt(queryItems.limit) > 0
-        ) {
-            endStr += ` LIMIT ${queryItems.limit}`
-            if (
-                queryItems.offset &&
-                isNumberString(queryItems.offset) &&
-                Number.parseInt(queryItems.offset) > 0
-            ) {
-                endStr = endStr.replace('LIMIT', `LIMIT ${queryItems.offset},`)
+        // select the default queries items
+        const defaultKeys = {}
+        for (const key of Object.entries(passedQuery)) {
+            if (!this.DEFAULT_QUERY.includes(key[0])) {
+                continue
+            }
+            defaultKeys[key[0]] = key[1]
+        }
+
+        // order the response
+        if (defaultKeys.order) {
+            for (const order of defaultKeys.order.split(';')) {
+                str += this.constructOrder(str, order.split(':').join(' '))
             }
         }
 
-        // remove the default query of the query list
-        queryItems = Object.entries(queryItems).filter(arr => {
-            return !DEFAULT_QUERY.includes(arr[0]) && queryList.includes(arr[0])
-        })
-
-        // adding where clauses dynamicly with valid query
-        const values = []
-        queryItems.forEach((element, index) => {
-            str += ` ${index === 0 ? 'WHERE' : 'AND'} ${element[0]} LIKE ?`
-            values.push('%' + element[1] + '%')
-        })
-        str += endStr
+        // generate the limit and offset component
+        if (stringAbove(defaultKeys.limit, 0)) {
+            str += ` LIMIT ${defaultKeys.limit}`
+            if (stringAbove(defaultKeys.offset, 0)) {
+                str = str.replace('LIMIT', `LIMIT ${defaultKeys.offset},`)
+            }
+        }
 
         // Execute the query
         let rows = null
         try {
             rows = await query(str, values)
         } catch (err) {
-            result(
-                new Response(500, { message: err || 'Something went wrong' })
-            )
+            result(new Response(500, { message: err || 'Something went wrong' }))
             return
         }
 
@@ -119,9 +144,7 @@ module.exports = class Model {
         try {
             rows = await query(`INSERT INTO ${name} SET ?`, newModel)
         } catch (err) {
-            result(
-                new Response(500, { message: err || 'Something went wrong' })
-            )
+            result(new Response(500, { message: err || 'Something went wrong' }))
             return
         }
         newModel.id = rows.insertId
@@ -138,7 +161,7 @@ module.exports = class Model {
     static async update(name, id, object, result) {
         // generate the query dynamicly with the extends Objects
         let str = `UPDATE ${name} SET`
-        Object.keys(object).forEach(token => {
+        Object.keys(object).forEach((token) => {
             str += ` ${token} = ?,`
         })
         str = str.substring(0, str.length - 1) + ' WHERE id = ?'
@@ -148,9 +171,7 @@ module.exports = class Model {
         try {
             rows = await query(str, [...Object.values(object), id])
         } catch (err) {
-            result(
-                new Response(500, { message: err || 'Something went wrong' })
-            )
+            result(new Response(500, { message: err || 'Something went wrong' }))
             return
         }
 
@@ -172,9 +193,7 @@ module.exports = class Model {
         try {
             rows = await query(`DELETE FROM ${name} WHERE id = ?`, id)
         } catch (err) {
-            result(
-                new Response(500, { message: err || 'Something went wrong' })
-            )
+            result(new Response(500, { message: err || 'Something went wrong' }))
             return
         }
 

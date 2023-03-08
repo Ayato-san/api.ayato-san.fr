@@ -1,165 +1,78 @@
-const { query } = require('../db.js')
+const Model = require('../Model')
 
-const { errorLog } = require('../../helper')
+module.exports = class Scan extends Model {
+    /**
+     * the table name
+     */
+    static #name = 'scan'
 
-const Scan = function (scan) {
-    this.id = scan.id
+    constructor(scan) {
+        super(scan.id)
+        this.name_original = scan.name_original
+        this.name_en = scan.name_en
+        this.name_alt = scan.name_alt
+        this.link = scan.link
+        this.image = scan.image
+        this.description = scan.description
+        this.censure = scan.censure
+        this.complete = scan.complete
+    }
 
-    this.name_original = scan.name_original
+    /**
+     * find one scan into the table
+     * @param {Number} id the id of the scan
+     * @param {Function} result the result processing function
+     */
+    static async find(id, result) {
+        await super.find(this.#name, id, result)
+    }
 
-    this.name_en = scan.name_en
+    /**
+     * find all scans into the table
+     * @param {{}} query the request query
+     * @param {Function} result the result processing function
+     */
+    static async findAll(query, result) {
+        let constraint = ''
+        const keys = []
+        if (query['name']) {
+            constraint += super.constructConstraint(
+                constraint,
+                '(name_original LIKE ? OR name_en LIKE ? OR name_alt LIKE ?)'
+            )
+            keys.push(super.likeValue(query['name']))
+            keys.push(super.likeValue(query['name']))
+            keys.push(super.likeValue(query['name']))
+        }
 
-    this.name_alt = scan.name_alt
+        await super.findAll(this.#name, query, constraint, keys, result)
+    }
 
-    this.link = scan.link
+    /**
+     * create a new scan into the table
+     * @param {Scan} newScan the scan will be added
+     * @param {Function} result the result processing function
+     */
+    static async create(newScan, result) {
+        await super.create(this.#name, newScan, result)
+    }
 
-    this.image = scan.image
+    /**
+     * update an scan of the table
+     * @param {Number} id the id of the scan
+     * @param {Scan} scan the updated scan
+     * @param {Function} result the result processing function
+     */
+    static async update(id, scan, result) {
+        await super.update(this.#name, id, scan, result)
+    }
 
-    this.description = scan.description
-
-    this.censure = scan.censure
-
-    this.complete = scan.complete
+    /**
+     * delete an scan of the table
+     * @param {Number} id the id of the scan
+     * @param {Function} result the result processing function
+     */
+    static async delete(id, result) {
+        await super.delete(this.#name, id, result)
+    }
 }
-
-Scan.create = async (newScan, result) => {
-    let row = null
-
-    try {
-        row = await query('INSERT INTO scan SET ?', newScan)
-    } catch (err) {
-        errorLog('error : ', err)
-
-        result(err, null)
-    }
-
-    result(null, { id: row.insertId, ...newScan })
-}
-
-Scan.find = async (id, result) => {
-    let rows = null
-
-    try {
-        rows = await query('SELECT * FROM scan WHERE id = ?', id)
-    } catch (err) {
-        errorLog('error : ', err)
-
-        result(err, null)
-    }
-
-    if (rows.length) {
-        result(null, rows)
-
-        return
-    }
-
-    // not found Scan with the id
-    result({ kind: 'not_found' }, null)
-}
-
-Scan.findByName = async (name, result) => {
-    name = '%' + name + '%'
-
-    let rows = null
-
-    try {
-        rows = await query(
-            'SELECT * FROM scan WHERE name_original LIKE ? OR name_en LIKE ? OR name_alt LIKE ? ORDER BY name_en, name_original',
-
-            [name, name, name]
-        )
-    } catch (err) {
-        errorLog('error : ', err)
-
-        result(err, null)
-    }
-
-    if (rows.length) {
-        result(null, rows)
-
-        return
-    }
-
-    // not found Scan with the id
-    result({ kind: 'not_found' }, null)
-}
-
-Scan.findAll = async result => {
-    let row = null
-
-    try {
-        row = await query('SELECT * FROM scan ORDER BY name_en, name_original')
-    } catch (err) {
-        errorLog('error : ', err)
-
-        result(err, null)
-    }
-
-    result(null, row)
-}
-
-Scan.updateById = async (id, scan, result) => {
-    let row = null
-
-    try {
-        row = await query(
-            'UPDATE scan SET scan.name_original = ?, scan.name_en = ?, scan.name_alt = ?, scan.link = ?, scan.image = ?, scan.description = ?, scan.censure = ?, scan.complete = ? WHERE id = ?',
-
-            [
-                scan.name_original,
-
-                scan.name_en,
-
-                scan.name_alt,
-
-                scan.link,
-
-                scan.image,
-
-                scan.description,
-
-                scan.censure,
-
-                scan.complete,
-
-                id
-            ]
-        )
-    } catch (err) {
-        errorLog('error : ', err)
-
-        result(err, null)
-    }
-
-    if (res.affectedRows == 0) {
-        // not found Scan with the id
-        notFound(result)
-
-        return
-    }
-
-    result(null, { id: id, ...scan })
-}
-
-Scan.delete = async (id, result) => {
-    let row = null
-
-    try {
-        row = await query('DELETE FROM scan WHERE id = ?', id)
-    } catch (err) {
-        errorLog('error : ', err)
-
-        result(err, null)
-    }
-
-    if (res.affectedRows == 0) {
-        // not found Scan with the id
-        notFound(result)
-
-        return
-    }
-
-    result(null, res)
-}
-
-module.exports = Scan
