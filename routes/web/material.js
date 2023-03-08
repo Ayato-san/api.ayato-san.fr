@@ -2,8 +2,9 @@ const materials = require('../../controllers/web/material.js')
 
 var router = require('express').Router()
 
+// TODO add trigger on mysql to implement post, put and delete route
 // Create a new Material
-router.post('/', materials.create)
+// router.post('/', materials.create)
 
 // Retrieve all Materials
 router.get('/', materials.findAll)
@@ -12,9 +13,9 @@ router.get('/', materials.findAll)
 router.get('/:id', materials.find)
 
 // Update a Material with id
-router.put('/:id', materials.update)
+// router.put('/:id', materials.update)
 
 // Delete a Material with id
-router.delete('/:id', materials.delete)
+// router.delete('/:id', materials.delete)
 
 module.exports = router
