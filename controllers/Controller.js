@@ -1,4 +1,4 @@
-const { newState } = require('../helper')
+const { state } = require('../helper')
 const Model = require('../models/Model')
 const HttpResponse = require('../models/Response')
 
@@ -10,8 +10,8 @@ module.exports = class Controller {
      * @param {Response} res the server response
      */
     static find(Interface, req, res) {
-        Interface.find(req.params.id, response => {
-            newState(res, response)
+        Interface.find(req.params.id, (response) => {
+            state(res, response)
         })
     }
 
@@ -22,8 +22,8 @@ module.exports = class Controller {
      * @param {Response} res the server response
      */
     static findAll(Interface, req, res) {
-        Interface.findAll(req.query, response => {
-            newState(res, response)
+        Interface.findAll(req.query, (response) => {
+            state(res, response)
         })
     }
 
@@ -36,10 +36,7 @@ module.exports = class Controller {
     static create(Interface, req, res) {
         // Validate request
         if (!req.body) {
-            newState(
-                res,
-                new HttpResponse(400, { message: 'Body can not be empty!' })
-            )
+            state(res, new HttpResponse(400, { message: 'Body can not be empty!' }))
             return
         }
 
@@ -47,8 +44,8 @@ module.exports = class Controller {
         const newInterface = new Interface(req.body)
 
         // Save user in the database
-        Interface.create(newInterface, response => {
-            newState(res, response)
+        Interface.create(newInterface, (response) => {
+            state(res, response)
         })
     }
 
@@ -61,15 +58,12 @@ module.exports = class Controller {
     static update(Interface, req, res) {
         // Validate Request
         if (!req.body) {
-            newState(
-                res,
-                new HttpResponse(400, { message: 'Body can not be empty!' })
-            )
+            state(res, new HttpResponse(400, { message: 'Body can not be empty!' }))
             return
         }
 
-        Interface.update(req.params.id, new Interface(req.body), response => {
-            newState(res, response)
+        Interface.update(req.params.id, new Interface(req.body), (response) => {
+            state(res, response)
         })
     }
 
@@ -80,8 +74,8 @@ module.exports = class Controller {
      * @param {Response} res the server response
      */
     static delete(Interface, req, res) {
-        Interface.delete(req.params.id, response => {
-            newState(res, response)
+        Interface.delete(req.params.id, (response) => {
+            state(res, response)
         })
     }
 }
