@@ -2,33 +2,12 @@ require('dotenv').config()
 
 // the 5 types of log, with their color code
 const logtypes = {
-    SUCCESS: {
-        name: 'SUCCESS',
-        color: '\x1b[32m'
-    },
-    INFO: {
-        name: 'INFO',
-        color: '\x1b[36m'
-    },
-    DEBUG: {
-        name: 'DEBUG',
-        color: '\x1B[35m'
-    },
-    WARNING: {
-        name: 'WARNING',
-        color: '\x1b[33m'
-    },
-    ERROR: {
-        name: 'ERROR',
-        color: '\x1b[31m'
-    }
-}
-
-// send the error state and log it on development mod
-function state(res, code, message) {
-    res.status(code).send({ message: message })
-    if (process.env.ENVIRONMENT === 'development')
-        errorLog(`${code} : "${message}"`)
+    SUCCESS: { name: 'SUCCESS', color: '\x1b[32m' },
+    INFO: { name: 'INFO', color: '\x1b[36m' },
+    REQUEST: { name: 'REQUEST', color: '\x1b[34m' },
+    DEBUG: { name: 'DEBUG', color: '\x1B[35m' },
+    WARNING: { name: 'WARNING', color: '\x1b[33m' },
+    ERROR: { name: 'ERROR', color: '\x1b[31m' },
 }
 
 /**
@@ -36,12 +15,8 @@ function state(res, code, message) {
  * @param {Response} res response object will be send by server
  * @param {*} data the custom response object this response data formated
  */
-function newState(res, data) {
-    res.status(data.status).send({
-        body: data.body,
-        count: data.count,
-        ok: data.ok
-    })
+function state(res, data) {
+    res.status(data.status).send({ body: data.body, count: data.count, ok: data.ok })
 }
 
 /**
@@ -54,11 +29,12 @@ function log(type, ...data) {
     const len = 7
     const message = [
         '[',
+        date.toLocaleDateString('fr-fr'),
         date.toLocaleTimeString('fr-fr'),
         ']',
         type.name.padEnd(len),
         ':',
-        ...data
+        ...data,
     ]
     // log just in development environment
     if (process.env.ENVIRONMENT === 'development') {
@@ -79,6 +55,13 @@ function successLog(...data) {
  */
 function infoLog(...data) {
     log(logtypes.INFO, ...data)
+}
+/**
+ * An request log
+ * @param  {...any} data the data will be logged
+ */
+function requestLog(...data) {
+    log(logtypes.REQUEST, ...data)
 }
 /**
  * A debug log
@@ -102,12 +85,4 @@ function errorLog(...data) {
     log(logtypes.ERROR, ...data)
 }
 
-module.exports = {
-    state,
-    newState,
-    successLog,
-    infoLog,
-    debugLog,
-    warningLog,
-    errorLog
-}
+module.exports = { state, successLog, infoLog, requestLog, debugLog, warningLog, errorLog }
