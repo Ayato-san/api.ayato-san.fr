@@ -5,7 +5,7 @@
         <a href="https://en.wikipedia.org/wiki/MIT_License" alt="Licence">
             <img src="https://img.shields.io/github/license/Ayato-san/api.ayato-san.fr" />
         </a>
-        <a href="https://en.wikipedia.org/wiki/MIT_License" alt="Licence">
+        <a href="" alt="Version">
             <img src="https://img.shields.io/github/package-json/v/Ayato-san/api.ayato-san.fr" />
         </a>
         <a href="https://github.com/Ayato-san/api.ayato-san.fr/pulse" alt="Activity">
@@ -17,14 +17,18 @@
     </p>
     <p>
         github</br>
-        <img src="https://img.shields.io/github/stars/Ayato-san/api.ayato-san.fr"/>
+        <a href="" alt="Stars">
+            <img src="https://img.shields.io/github/stars/Ayato-san/api.ayato-san.fr"/>
+        </a>
         <a href="https://github.com/Ayato-san/api.ayato-san.fr/commits" alt="Commits">
             <img src="https://img.shields.io/github/last-commit/Ayato-san/api.ayato-san.fr"/>
         </a>
         <a href="https://github.com/Ayato-san/api.ayato-san.fr/issues" alt="issues">
             <img src="https://img.shields.io/github/issues/Ayato-san/api.ayato-san.fr"/>
         </a>
-        <img src="https://img.shields.io/github/languages/code-size/Ayato-san/api.ayato-san.fr"/>
+        <a href="" alt="Code Size">
+            <img src="https://img.shields.io/github/languages/code-size/Ayato-san/api.ayato-san.fr"/>
+        </a>
     </p>
     <p>
         <a>Documentation</a>
